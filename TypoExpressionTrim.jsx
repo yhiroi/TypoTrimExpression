@@ -56,7 +56,7 @@
         .property("ADBE Effect Parade")
         .addProperty("ADBE Slider Control");
       trimRatio.name = "Trim_ratio(%)";
-      trimRatio["スライダー"].setValue(100);
+      trimRatio.property("ADBE Slider Control-0001").setValue(100);
 
       // コンポの先頭にレイヤーを移動
       partsCtl.moveToBeginning();
@@ -84,7 +84,7 @@
         // - パスの終点 : 0%→100%へのイージングをヌルレイヤーで管理
         l_trim.end.expression =
           "seedRandom(1, true); \n" +
-          'thisComp.layer("PartsController").effect("Trim_ratio(%)")("スライダー").valueAtTime(time-inPoint);';
+          'thisComp.layer("PartsController").effect("Trim_ratio(%)")("ADBE Slider Control-0001").valueAtTime(time-inPoint);';
 
         // パスに線を追加
         var l_line = l
@@ -98,7 +98,7 @@
         // パスのトリミングに紐づくスライダー制御が100以下か否かで、線の表示を切り替える
         // (線の不透明度の値をエクスプレッションで制御)
         l_line.property("ADBE Vector Stroke Opacity").expression =
-          'var trim_ratio = thisComp.layer("PartsController").effect("Trim_ratio(%)")("スライダー").valueAtTime(time-inPoint); \n' +
+          'var trim_ratio = thisComp.layer("PartsController").effect("Trim_ratio(%)")("ADBE Slider Control-0001").valueAtTime(time-inPoint); \n' +
           "if (trim_ratio <= 100) { \n" +
           "\t opacity = 100;\n" +
           "} else { \n" +
@@ -116,7 +116,7 @@
         // パスのトリミングに紐づくスライダー制御が100を超えるか否かで、塗りの表示を切り替え
         // (塗りの不透明度の値をエクスプレッションで制御)
         l_fill.property("ADBE Vector Fill Opacity").expression =
-          'var trim_ratio = thisComp.layer("PartsController").effect("Trim_ratio(%)")("スライダー").valueAtTime(time-inPoint); \n' +
+          'var trim_ratio = thisComp.layer("PartsController").effect("Trim_ratio(%)")("ADBE Slider Control-0001").valueAtTime(time-inPoint); \n' +
           "if (trim_ratio > 100) { \n" +
           "\t opacity = 100;\n" +
           "} else { \n" +
