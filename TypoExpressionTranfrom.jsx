@@ -108,6 +108,21 @@
       trimRatio.name = "Trim_ratio(%)";
       trimRatio["スライダー"].setValue(100);
 
+      // - 全パラメータのランダムシード
+      var randSeeds = partsCtl
+        .property("ADBE Effect Parade")
+        .addProperty("ADBE Slider Control");
+      randSeeds.name = "Random_seed";
+      randSeeds["スライダー"].setValue(1);
+
+      // - 全パラメータのランダムタイプ
+      //   オフで1方向、オンで双方向
+      var randDirection = partsCtl
+        .property("ADBE Effect Parade")
+        .addProperty("ADBE Checkbox Control");
+      randDirection.name = "Random_Direction(Off:UniDir_On:BiDir)";
+      randDirection["チェックボックス"].setValue(0);
+
       // コンポの先頭にレイヤーを移動
       partsCtl.moveToBeginning();
     }
@@ -134,18 +149,26 @@
         // - 位置
         // - エクスプレッションの内容は過去のLTを参照
         l.transform.position.expression =
-          "seedRandom(1, true); \n" +
+          'var rdsd = Math.abs( Math.floor( thisComp.layer("PartsController").effect("Random_seed")("スライダー") ) ); \n' +
+          "seedRandom(rdsd, true); \n" +
           'var maxdist_x = thisComp.layer("PartsController").effect("PositionX_maxDist")("スライダー"); \n' +
           'var maxdist_y = thisComp.layer("PartsController").effect("PositionY_maxDist")("スライダー"); \n' +
-          "var dist_x = random(maxdist_x / 2., maxdist_x); \n" +
-          "var dist_y = random(maxdist_y / 2., maxdist_y); \n" +
+          'var mindist_x = maxdist_x / 2.; \n' +
+          'if (thisComp.layer("PartsController").effect("Random_Direction(Off:UniDir_On:BiDir)")("チェックボックス")==1) { \n' +
+          "mindist_x = -mindist_x } \n" +
+          'var mindist_y = maxdist_y / 2.; \n' +
+          'if (thisComp.layer("PartsController").effect("Random_Direction(Off:UniDir_On:BiDir)")("チェックボックス")==1) { \n' +
+          "mindist_y = -mindist_y } \n" +
+          "var dist_x = random(mindist_x, maxdist_x); \n" +
+          "var dist_y = random(mindist_y, maxdist_y); \n" +
           'var ratio_x = (100. - thisComp.layer("PartsController").effect("PositionX_ratio(%)")("スライダー").valueAtTime(time-inPoint)) / 100.; \n' +
           'var ratio_y = (100. - thisComp.layer("PartsController").effect("PositionY_ratio(%)")("スライダー").valueAtTime(time-inPoint)) / 100.; \n' +
           "transform.position = transform.position + [dist_x * ratio_x, dist_y * ratio_y, 0];";
 
         // // - x回転
         // l.transform.xRotation.expression =
-        //   "seedRandom(1, true); \n" +
+        //   'var rdsd = Math.abs( Math.floor( thisComp.layer("PartsController").effect("Random_seed")("スライダー") ) ); \n' +
+        //   "seedRandom(rdsd, true); \n" +
         //   'var maxrot = thisComp.layer("PartsController").effect("Rotation_maxRot")("スライダー"); \n' +
         //   'var ratio_rot = (100. - thisComp.layer("PartsController").effect("Rotation_ratio(%)")("スライダー").valueAtTime(time-inPoint)) / 100.; \n' +
         //   "var rot_x = random(-maxrot, maxrot); \n" +
@@ -153,7 +176,8 @@
 
         // // - y回転
         // l.transform.yRotation.expression =
-        //   "seedRandom(1, true); \n" +
+        //   'var rdsd = Math.abs( Math.floor( thisComp.layer("PartsController").effect("Random_seed")("スライダー") ) ); \n' +
+        //   "seedRandom(rdsd, true); \n" +
         //   'var maxrot = thisComp.layer("PartsController").effect("Rotation_maxRot")("スライダー"); \n' +
         //   'var ratio_rot = (100. - thisComp.layer("PartsController").effect("Rotation_ratio(%)")("スライダー").valueAtTime(time-inPoint)) / 100.; \n' +
         //   "var rot_y = random(-maxrot, maxrot); \n" +
@@ -161,7 +185,8 @@
 
         // - z回転
         l.transform.zRotation.expression =
-          "seedRandom(1, true); \n" +
+          'var rdsd = Math.abs( Math.floor( thisComp.layer("PartsController").effect("Random_seed")("スライダー") ) ); \n' +
+          "seedRandom(rdsd, true); \n" +
           'var maxrot = thisComp.layer("PartsController").effect("Rotation_maxRot")("スライダー"); \n' +
           'var ratio_rot = (100. - thisComp.layer("PartsController").effect("Rotation_ratio(%)")("スライダー").valueAtTime(time-inPoint)) / 100.; \n' +
           "var rot_z = random(-maxrot, maxrot); \n" +
